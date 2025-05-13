@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+#==============================================================
+#  1. Set dunder environment variables
+#==============================================================
+
+#--------------------------------------------------------------
+#  The dunder environment variable [__name__] to the first
+#  (and only) argument passed to this script when it is sourced.
+#
+#  It represents the project name, and will be prepended to all
+#  environment variables exported by the [__export__] function.
+#--------------------------------------------------------------
+
+__name__=TMP_BCH_FOO
+
+#--------------------------------------------------------------
+#  The following dunders are paths related to the module.
+#--------------------------------------------------------------
+
+__here__=$(dirname ${BASH_SOURCE[0]})
+__root__=$(dirname ${__here__})
+__blib__=${__here__}/lib
+__bbin__=${__here__}/bin
+__rlib__=${__root__}/lib
+__rbin__=${__root__}/bin
+
+#==============================================================
+#  2. Set dunder functions
+#==============================================================
+
+#--------------------------------------------------------------
+#  Export environment variables with project prefix
+#--------------------------------------------------------------
+
+__export__ ()  {
+    export ${__name__}_$1=$2;
+}
+
+#--------------------------------------------------------------
+#  If $1 is not in PATH, append it
+#--------------------------------------------------------------
+
+__path__ () {
+    [[ ":$PATH:" == *":${1}:"* ]] || export PATH=${PATH}:${1}
+}
+
+#==============================================================
+#  4. Export system paths
+#==============================================================
+
+__export__  s_blib    ${__blib__}
+__export__  s_rlib    ${__rlib__}
+
+__export__  s_bbin    ${__bbin__}
+__export__  s_rbin    ${__rbin__}
+
+__export__  s_bcall   ${__bbin__}/.tmp-bch-foo
+__export__  s_rcall   ${__rbin__}/.tmp-bch-foo
+
+
+#==============================================================
+#  4. Source ./__user__.sh
+#==============================================================
+
+. $(dirname ${BASH_SOURCE[0]})/__user__.sh $*
+
+
+#==============================================================
+#  5. Unset dunders
+#==============================================================
+
+unset __name__
+unset __here__
+unset __blib__
+unset __bbin__
+unset __rlib__
+unset __rbin__
+unset __root__
+unset __export__
+unset __path__
+
